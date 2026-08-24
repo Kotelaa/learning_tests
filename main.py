@@ -21,3 +21,9 @@ def divide(a, b):
        print(f'Invalid types: {e}')
        return None
    return result
+
+
+def is_valid_password(password):
+    if len(password) < 8:
+        return False
+    return True
