@@ -60,9 +60,11 @@ def test_habit_streak(habit_dict):
     ('Do exercises', 3)
 ])
 def test_add_habit(habit_name, habit_streak, habit_dict):
-    habit_dict['name'] == habit_name
-    habit_dict['streak'] == habit_streak
-    assert habit_dict.get('name') in habit_dict
+    habit_dict['name'] = habit_name
+    habit_dict['streak'] = habit_streak
+
+    assert habit_dict['name'] == habit_name
+    assert habit_dict['streak'] == habit_streak
 
 
 @pytest.mark.parametrize('password, result', [
@@ -72,5 +74,5 @@ def test_add_habit(habit_name, habit_streak, habit_dict):
     ('----', False)
 ])
 def test_is_valid_password(password, result):
-    assert password == result
+    assert is_valid_password(password) == result
 
