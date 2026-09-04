@@ -56,3 +56,12 @@ def test_delete_post():
     assert response.status_code == 204
 
 
+def test_get_nonexisting_page():
+    response = requests.get(f'{BASE_URL}/posts/999999999')
+    assert requests.status_codes == 404
+
+
+def test_create_post_missing_required_field():
+    payload = {'body': 'No title here'}
+    response = requests.post(f'{BASE_URL}/posts', json=payload)
+    print(response.status_code, response.json())
