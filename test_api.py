@@ -3,6 +3,7 @@ import pytest
 
 BASE_URL = 'https://jsonplaceholder.typicode.com'
 
+
 @pytest.fixture
 def valid_payload():
     return {'title': 'Test post', 'body': 'Content here', 'userID': 1}
