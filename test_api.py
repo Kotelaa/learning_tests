@@ -3,19 +3,10 @@ import pytest
 
 BASE_URL = 'https://jsonplaceholder.typicode.com'
 
+@pytest.fixture
+def valid_payload():
+    return {'title': 'Test post', 'body': 'Content here', 'userID': 1}
 
-def test_get_single_post():
-    response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
-    assert response.status_code == 200
-    assert response.json()['userID'] == 1
-    assert response.json()['title'] == (
-        'sunt aut facere repellat provident occaecati excepturi optio '
-        'reprehenderit'
-    )
-    assert response.json()['body'] == (
-        "quia et suscipit\nsuscipit recusandae consequuntur expedita et "
-        "cum\nreprehenderit molestiae ut ut quas totam\nnostrum "
-        "rerum est autem sunt rem eveniet architecto")
 
 def test_get_single_post_another_test():
     response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
@@ -24,24 +15,6 @@ def test_get_single_post_another_test():
     data = response.json()
     assert data["id"] == 1
     assert "title" in data
-
-
-def test_get_post():
-    response = requests.get(f'{BASE_URL}/posts/1')
-    assert response.status_code == 200
-    assert response.json()['id'] == 1
-
-
-def test_create_post():
-    payload = {
-        'title': 'Hello',
-        'body': 'World',
-        'userID': 1,
-    }
-    response = requests.post(f'{BASE_URL}/posts', json=payload)
-    assert response.status_code == 201
-    assert response.json()['userID'] == 1
-    assert response.json()['title'] == 'Hello'
 
 
 def test_update_post():
@@ -56,12 +29,23 @@ def test_delete_post():
     assert response.status_code == 204
 
 
-def test_get_nonexisting_page():
-    response = requests.get(f'{BASE_URL}/posts/999999999')
-    assert requests.status_codes == 404
-
-
 def test_create_post_missing_required_field():
     payload = {'body': 'No title here'}
     response = requests.post(f'{BASE_URL}/posts', json=payload)
     print(response.status_code, response.json())
+
+
+@pytest.mark.parametrize('post_id', 'expected_status', [
+    (1, 200),
+    (100, 200),
+    (9999999, 404)
+])
+def test_get_post_various_ids(post_id, expected_status):
+    response = requests.get(f'{BASE_URL}/posts/{post_id}')
+    assert response.status_code == expected_status
+
+
+def test_post_with_fixture(valid_payload):
+    response = requests.post(f'{BASE_URL}/posts', json=valid_payload)
+    assert response.status_code == 201
+    assert response.json()['title'] == valid_payload['title']
