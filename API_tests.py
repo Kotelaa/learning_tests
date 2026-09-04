@@ -23,3 +23,33 @@ def test_get_single_post_another_test():
     data = response.json()
     assert data["id"] == 1
     assert "title" in data
+
+
+def test_get_post():
+    response = requests.get(f'{BASE_URL}/posts/1')
+    assert response.status_code == 200
+    assert response.json()['id'] == 1
+
+
+def test_create_post():
+    payload = {
+        'title': 'Hello',
+        'body': 'World',
+        'userID': 1,
+    }
+    response = requests.post(f'{BASE_URL}/posts', json=payload)
+    assert response.status_code == 201
+    assert response.json()['userID'] == 1
+    assert response.json()['title'] == 'Hello'
+
+
+def test_update_post():
+    payload = {'title': 'Updated title'}
+    response = requests.patch(f'{BASE_URL}/posts/1', json=payload)
+    assert response.status_code == 200
+    assert response.json()['title'] == 'Updated title'
+
+
+def test_delete_post():
+    response = requests.delete(f'{BASE_URL}/posts/1')
+    assert response.status_code == 204
