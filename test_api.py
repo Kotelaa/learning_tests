@@ -1,5 +1,6 @@
 import requests
 import pytest
+from urllib3.util import parse_url
 
 BASE_URL = 'https://jsonplaceholder.typicode.com'
 
@@ -7,6 +8,10 @@ BASE_URL = 'https://jsonplaceholder.typicode.com'
 @pytest.fixture
 def valid_payload():
     return {'title': 'Test post', 'body': 'Content here', 'userID': 1}
+
+@pytest.fixture
+def valid_new_post():
+    return {'title': 'New post', 'body': 'Post\'s content', 'userID': 1}
 
 
 def test_get_single_post_another_test():
@@ -50,3 +55,26 @@ def test_post_with_fixture(valid_payload):
     response = requests.post(f'{BASE_URL}/posts', json=valid_payload)
     assert response.status_code == 201
     assert response.json()['title'] == valid_payload['title']
+
+
+@pytest.mark.parametrize('id, expected_status', [
+    (1, 200),
+    (5, 200),
+    (10, 200),
+    (9999, 404)
+])
+def test_get_user(id, expected_status):
+    response = requests.get(f'{BASE_URL}/users/{id}')
+    assert response.status_code == expected_status
+
+
+def test_create_post_with_valid_data(valid_new_post):
+    response = requests.post(f'{BASE_URL}/posts', json=valid_new_post)
+    assert response.status_code == 201
+    assert response.json()['userID'] == 1
+
+
+def test_create_post_with_no_data():
+    payload = {}
+    response = requests.post(f'{BASE_URL}/posts', json=payload)
+    assert response.status_code == 400
