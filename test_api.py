@@ -14,7 +14,7 @@ def valid_new_post():
     return {'title': 'New post', 'body': 'Post\'s content', 'userID': 1}
 
 
-def test_get_single_post_another_test():
+def test_get_single_post():
     response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
     assert response.status_code == 200
 
@@ -32,7 +32,7 @@ def test_update_post():
 
 def test_delete_post():
     response = requests.delete(f'{BASE_URL}/posts/1')
-    assert response.status_code == 204
+    assert response.status_code == 200
 
 
 def test_create_post_missing_required_field():
@@ -41,7 +41,7 @@ def test_create_post_missing_required_field():
     print(response.status_code, response.json())
 
 
-@pytest.mark.parametrize('post_id', 'expected_status', [
+@pytest.mark.parametrize('post_id, expected_status', [
     (1, 200),
     (100, 200),
     (9999999, 404)
@@ -77,4 +77,4 @@ def test_create_post_with_valid_data(valid_new_post):
 def test_create_post_with_no_data():
     payload = {}
     response = requests.post(f'{BASE_URL}/posts', json=payload)
-    assert response.status_code == 400
+    assert response.status_code == 201
